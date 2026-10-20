@@ -67,3 +67,19 @@
   * `PUT /api/armarios/{id}` — Edita dados ou datas da reserva.
   * `DELETE /api/armarios/{id}` — Exclui/cancela a reserva.
   * `PATCH /api/armarios/{id}/liberar` — Marca a reserva como encerrada/inativa.
+
+* **Pseudocódigo da Regra de Negócio (Validação de Conflito de Horário):**
+```text
+Função criarReserva(novaReserva):
+    reservasExistentes = repository.buscarAtivasPorArmario(novaReserva.numeroArmario)
+    
+    Para Cada reserva Em reservasExistentes Faça
+        Se (novaReserva.dataInicio < reserva.dataFim) E (novaReserva.dataFim > reserva.dataInicio) Então
+            LançarErro("O armário já possui uma reserva ativa para o período informado.")
+        FimSe
+    FimPara
+    
+    novaReserva.ativo = Verdadeiro
+    Retornar repository.salvar(novaReserva)
+FimFuncao
+```
